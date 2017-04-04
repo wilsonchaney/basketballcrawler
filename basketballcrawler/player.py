@@ -1,4 +1,4 @@
-from soup_utils import getSoupFromURL
+from soup_utils import get_soup_from_url
 import re
 import logging
 import json
@@ -41,7 +41,7 @@ class Player(object):
         if self.overview_url_content is not None:
             raise Exception("Can't populate this!")
 
-        overview_soup = getSoupFromURL(self.overview_url)
+        overview_soup = get_soup_from_url(self.overview_url)
         self.overview_url_content = overview_soup.text
 
         try:

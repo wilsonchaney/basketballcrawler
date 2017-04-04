@@ -1,11 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 
-def getSoupFromURL(url, suppressOutput=True):
+def get_soup_from_url(url, suppress_output=True):
     """
     This function grabs the url and returns and returns the BeautifulSoup object
     """
-    if not suppressOutput:
+    if not suppress_output:
         print url
 
     try:
