@@ -13,5 +13,5 @@ def get_soup_from_url(url, suppress_output=True):
     except:
         return None
 
-    return BeautifulSoup(r.text)
+    return BeautifulSoup(r.text, "html5lib")
 
