@@ -27,26 +27,26 @@ a given player, and convert that list into pandas dataframe.
 Notes
 -----
 
-`players.json` was generated on 02/11/2016 by `buildPlayerDictionary()` and `savePlayerDictionary()`.
+`players.json` was generated on 02/11/2016 by `build_player_dictionary()` and `save_player_dictionary()`.
 I'd recommend building your own, fresh copy. It takes about 10 minutes to scrape from the site.
 To create the most recent `players.json`, you can use as follows.
 
 ```python
-import basketballCrawler as bc
-players = bc.buildPlayerDictionary()
-bc.savePlayerDictionary(players, '/path/to/file')
+import basketballcrawler as bc
+players = bc.build_player_dictionary()
+bc.save_player_dictionary(players, '/path/to/file')
 ```
 
 You can also download generated `players.json`. However, note that it's a pretty large (13M) file.
 
 ```python
-players = bc.loadPlayerDictionary('/path/to/players.json')
+players = bc.load_player_dictionary('/path/to/players.json')
 ```
 
-In order to search player name, use `searchForName` function, for example,
+In order to search player name, use `search_for_name` function, for example,
 
 ```python
-searched_player = bc.searchForName(players, 'Murphey') # players is player dictionary
+searched_player = bc.search_for_name(players, 'Murphey') # players is player dictionary
 ```
 
 
