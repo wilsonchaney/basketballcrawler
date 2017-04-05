@@ -8,11 +8,6 @@ import pandas as pd
 
 from player import Player, get_soup_from_url
 
-__all__ = ['get_soup_from_url', 'get_player_names_and_URLs',
-           'build_player_dictionary', 'search_for_name',
-           'save_player_dictionary', 'load_player_dictionary',
-           'game_logs']
-
 BASKETBALL_LOG = 'basketball.log'
 
 logging.basicConfig(filename=BASKETBALL_LOG,
