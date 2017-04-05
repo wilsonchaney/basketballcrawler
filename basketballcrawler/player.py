@@ -1,7 +1,9 @@
-from soup_utils import get_soup_from_url
-import re
-import logging
 import json
+import logging
+import re
+
+from soup_utils import get_soup_from_url
+
 
 class Player(object):
     # Regex patterns for player info
@@ -20,7 +22,13 @@ class Player(object):
     gamelog_data = None
     gamelog_url_list = []
 
-    def __init__(self,_name,_overview_url,scrape_data=True):
+    def __init__(self, _name, _overview_url, scrape_data=True):
+        """
+        :param _name: player name (str)
+        :param _overview_url: url of player page on basketball-reference
+        :param scrape_data: if True, this will download the source from the URL and get the players stats from it
+                            set to False when players data has already been scraped
+        """
         self.name = _name
         self.overview_url = _overview_url
 
@@ -37,7 +45,10 @@ class Player(object):
             self.scrape_data()
 
     def scrape_data(self):
-        print self.name,self.overview_url
+        """
+        Scrapes the players data from basketball-reference
+        """
+
         if self.overview_url_content is not None:
             raise Exception("Can't populate this!")
 
@@ -45,12 +56,14 @@ class Player(object):
         self.overview_url_content = overview_soup.text
 
         try:
-            player_position_text = overview_soup.findAll(text=re.compile(u'(Point Guard|Center|Power Forward|Shooting Guard|Small Forward)'))[0]
+            player_position_text = \
+            overview_soup.findAll(text=re.compile(u'(Point Guard|Center|Power Forward|Shooting Guard|Small Forward)'))[
+                0]
             player_height_text = overview_soup.findAll(text=re.compile(self.HEIGHT_PATTERN))[0]
             player_weight_text = overview_soup.findAll(text=re.compile(self.WEIGHT_PATTERN))[0]
-            self.height = re.findall(self.HEIGHT_PATTERN,player_height_text)[0].strip().encode("utf8")
-            self.weight = re.findall(self.WEIGHT_PATTERN,player_weight_text)[0].strip().encode("utf8")
-            tempPositions = re.findall(self.POSN_PATTERN,player_position_text)
+            self.height = re.findall(self.HEIGHT_PATTERN, player_height_text)[0].strip().encode("utf8")
+            self.weight = re.findall(self.WEIGHT_PATTERN, player_weight_text)[0].strip().encode("utf8")
+            tempPositions = re.findall(self.POSN_PATTERN, player_position_text)
             self.positions = [position.strip().encode("utf8") for position in tempPositions]
 
         except Exception as ex:
@@ -64,10 +77,13 @@ class Player(object):
         for li in overview_soup.find_all('li'):
             game_log_links = []
             if 'Game Logs' in li.getText():
-                game_log_links =  li.findAll('a')
+                game_log_links = li.findAll('a')
 
             for game_log_link in game_log_links:
                 self.gamelog_url_list.append('http://www.basketball-reference.com' + game_log_link.get('href'))
 
     def to_json(self):
+        """
+        :return: dictionary containing all data about this player
+        """
         return json.dumps(self.__dict__)
