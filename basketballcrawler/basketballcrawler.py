@@ -16,6 +16,12 @@ logging.basicConfig(filename=BASKETBALL_LOG,
 
 
 def get_player_names_and_URLs():
+    """
+    Fetch player names and URLs from basketball-reference.
+    Note: this doesn't fetch the player stats, just their URLs.
+
+    :return: dictionary of player_name -> player_url
+    """
     names = []
 
     for letter in string.ascii_lowercase:
@@ -37,6 +43,8 @@ def get_player_names_and_URLs():
 def build_player_dictionary():
     """
     Builds a dictionary for all current players in the league-- this takes about 10 minutes to run!
+
+    :return: dictionary of player_name (str) -> Player object
     """
 
     logging.debug("Begin grabbing name list")
@@ -56,6 +64,10 @@ def build_player_dictionary():
 def fuzzy_ratio(name, search_string):
     """
     Calculate difflib fuzzy ratio
+
+    :param name: player name (str)
+    :param search_string: (str)
+    :return: ratio (float in [0,1])
     """
     return SequenceMatcher(None, search_string.lower(), name.lower()).ratio()
 
@@ -64,7 +76,11 @@ def search_for_name(player_dictionary, search_string, threshold=0.5):
     """
     Case insensitive partial search for player names, returns a list of strings,
     names that contained the search string.  Uses difflib for fuzzy matching.
-    threshold:
+
+    :param player_dictionary: dictionary of player names -> Player objects
+    :param search_string: (str)
+    :param threshold: threshold for fuzzy string matching - higher is stricter
+    :return: list of strings (all names containing the search string)
     """
     players_name = player_dictionary.keys()
     search_string = search_string.lower()
@@ -77,17 +93,23 @@ def search_for_name(player_dictionary, search_string, threshold=0.5):
 def save_player_dictionary(player_dictionary, path_to_file):
     """
     Saves player dictionary to a JSON file
+
+    :param player_dictionary: dictionary of player names -> Player objects
+    :param path_to_file: (str)
     """
     player_json = {name: player_data.to_json() for name, player_data in player_dictionary.items()}
     json.dump(player_json, open(path_to_file, 'wb'), indent=0)
 
 
-def load_player_dictionary(pathToFile):
+def load_player_dictionary(path_to_file):
     """
     Loads previously saved player dictionary from a JSON file
+
+    :param path_to_file: (str)
+    :return: dictionary of player names -> Player objects
     """
     result = {}
-    with open(pathToFile) as f:
+    with open(path_to_file) as f:
         json_dict = json.loads(f.read())
         for player_name in json_dict:
             parsed_player = Player(None, None, False)
@@ -100,13 +122,19 @@ def df_from_gamelog_url_list(gamelogs):
     """
     Functions to parse the gamelogs
     Takes a list of game log urls and returns a concatenated DataFrame
+
+    :param gamelogs: list of game log urls
+    :return: pandas DataFrame
     """
     return pd.concat([df_from_gamelog_url(g) for g in gamelogs])
 
 
 def df_from_gamelog_url(url):
     """
-    Takes a url of a player's game log for a given year, returns a DataFrame
+    Converts a players game log (given url) to a pandas DataFrame.
+
+    :param url: game log url
+    :return: pandas DataFrame
     """
     glsoup = get_soup_from_url(url)
 
@@ -138,7 +166,9 @@ def df_from_gamelog_url(url):
 def soup_table_to_df(table_soup, header):
     """
     Parses the HTML/Soup table for the gamelog stats.
-    Returns a pandas DataFrame
+
+    :param table_soup: BeautifulSoup object for a table of basketball-reference
+    :return: pandas DataFrame
     """
     if not table_soup:
         return None
@@ -153,5 +183,13 @@ def soup_table_to_df(table_soup, header):
 
 
 def game_logs(playerDictionary, name):
-    ### would be nice to put some caching logic here...
+    """
+    Essentially a wrapper method - see basketballcrawler.df_from_gamelog_url_list
+
+    :param playerDictionary: dictionary of player names -> Player objects
+    :param name: player name (str)
+    :return: pandas DataFrame
+    """
+
+    # TODO: would be nice to put some caching logic here...
     return df_from_gamelog_url_list(playerDictionary[name].gamelog_url_list)

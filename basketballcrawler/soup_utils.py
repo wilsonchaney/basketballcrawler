@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 def get_soup_from_url(url):
     """
     This function grabs the url and returns and returns the BeautifulSoup object
+
+    :param url: str
+    :returns: BeautifulSoup object
     """
 
     logging.debug("Getting soup from %s" % url)
